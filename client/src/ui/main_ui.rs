@@ -51,9 +51,6 @@ pub struct MainWindow {
     #[nwg_events(OnWindowClose: [MainWindow::close])]
     window: nwg::Window,
 
-    #[nwg_resource(source_file: Some("title.ico"))]
-    title_icon: nwg::Icon,
-
     #[nwg_control(position: (2, 15), size: (516, 24), text: "Label", 
         flags: "VISIBLE|ELIPSIS", h_align: HTextAlign::Center, 
         // background_color: Some([255, 0, 255])
@@ -78,11 +75,7 @@ pub struct MainWindow {
 }
 
 impl MainWindow {
-    fn setup_icon(&self) {
-        self.window.set_icon(Some(&self.title_icon));
-    }
-
-    pub fn new() -> (MainUiCommand, main_window_ui::MainWindowUi) {
+    fn new() -> (MainUiCommand, main_window_ui::MainWindowUi) {
         let (dialog_result, receiver) = tokio::sync::mpsc::channel(1000);
         let (sender, commands) = tokio::sync::mpsc::channel(1000);
         
@@ -91,7 +84,6 @@ impl MainWindow {
             label: Default::default(),
             label_secondary: Default::default(),
             progress: Default::default(),
-            title_icon: Default::default(),
             notice: Default::default(),
             commands: RefCell::new(commands),
             dialog_result,
@@ -99,8 +91,10 @@ impl MainWindow {
 
         let ui = Self::build_ui(data).unwrap();
 
-        // 在 dispatch 前手动设置图标
-        ui.window.set_icon(Some(&ui.title_icon));
+        // 从文件加载图标并设置
+        if let Ok(icon) = nwg::Icon::from_file("title.ico", false) {
+            ui.window.set_icon(Some(&icon));
+        }
 
         let cmd = MainUiCommand { 
             inner: Arc::new(Mutex::new(MainUiCommandInner {

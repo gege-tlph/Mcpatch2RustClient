@@ -16,18 +16,11 @@ pub struct MessageBoxWindow {
     #[nwg_events(OnWindowClose: [MessageBoxWindow::close])]
     window: nwg::Window,
 
-    #[nwg_resource(source_file: Some("title.ico"))]
-    title_icon: nwg::Icon,
-
-    #[nwg_control(position: (5, 5), size: (473, 333), text: "example text", readonly: false)]
+    #[nwg_control(text: "example text", readonly: false)]
     richtext: nwg::TextBox,
 }
 
 impl MessageBoxWindow {
-    fn setup_icon(&self) {
-        self.window.set_icon(Some(&self.title_icon));
-    }
-
     // --- 以下为原有方法 ---
     pub fn popup(title: impl AsRef<str>, content: impl AsRef<str>) -> MessageBoxWindowJoinHandle {
         let (tx, rx) = tokio::sync::oneshot::channel::<()>();
@@ -38,14 +31,22 @@ impl MessageBoxWindow {
         std::thread::spawn(move || {
             let data = Self {
                 window: Default::default(),
-                title_icon: Default::default(),
                 richtext: Default::default(),
             };
 
             let ui = Self::build_ui(data).unwrap();
 
-            // 在 dispatch_events 前手动设置图标，确保首次渲染时就生效
-            ui.window.set_icon(Some(&ui.title_icon));
+            // 从文件加载图标并设置
+            if let Ok(icon) = nwg::Icon::from_file("title.ico", false) {
+                ui.window.set_icon(Some(&icon));
+            }
+
+            // 调整文本框填充窗口客户区（留 5px 边距）
+            // OnResize 里会自动调整，但手动初始化时也要设好
+            let (w, h) = ui.window.size();
+            ui.richtext.set_position((5, 5));
+            ui.richtext.set_size(w.saturating_sub(10), h.saturating_sub(10));
+
             ui.window.set_text(&title);
             ui.richtext.set_text(&content);
 
