@@ -55,6 +55,14 @@ jobs:
           name: client-windows-${{ matrix.rustc-target }}
           path: target/${{ matrix.rustc-target }}/release/client.exe
 
+      - name: Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p target/dist
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp target/${{ matrix.rustc-target }}/release/client.exe target/dist/client-windows-${{ matrix.rustc-target }}.exe
+          fi
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
