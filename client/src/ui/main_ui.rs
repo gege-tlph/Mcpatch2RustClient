@@ -48,7 +48,7 @@ enum Command {
 #[derive(NwgUi)]
 pub struct MainWindow {
     #[nwg_control(size: (520, 150), flags: "WINDOW", center: true, topmost: false)]
-    #[nwg_events(OnWindowClose: [MainWindow::close], OnInit: [MainWindow::setup_icon])]
+    #[nwg_events(OnWindowClose: [MainWindow::close])]
     window: nwg::Window,
 
     #[nwg_resource(source_file: Some("title.ico"))]
@@ -98,6 +98,9 @@ impl MainWindow {
         };
 
         let ui = Self::build_ui(data).unwrap();
+
+        // 在 dispatch 前手动设置图标
+        ui.window.set_icon(Some(&ui.title_icon));
 
         let cmd = MainUiCommand { 
             inner: Arc::new(Mutex::new(MainUiCommandInner {

@@ -13,7 +13,7 @@ use crate::ui::OneshotReceiver;
 #[derive(NwgUi)]
 pub struct MessageBoxWindow {
     #[nwg_control(size: (480, 340), flags: "WINDOW|VISIBLE", center: true, topmost: true)]
-    #[nwg_events(OnWindowClose: [MessageBoxWindow::close], OnInit: [MessageBoxWindow::setup_icon])]
+    #[nwg_events(OnWindowClose: [MessageBoxWindow::close])]
     window: nwg::Window,
 
     #[nwg_resource(source_file: Some("title.ico"))]
@@ -44,6 +44,8 @@ impl MessageBoxWindow {
 
             let ui = Self::build_ui(data).unwrap();
 
+            // 在 dispatch_events 前手动设置图标，确保首次渲染时就生效
+            ui.window.set_icon(Some(&ui.title_icon));
             ui.window.set_text(&title);
             ui.richtext.set_text(&content);
 
