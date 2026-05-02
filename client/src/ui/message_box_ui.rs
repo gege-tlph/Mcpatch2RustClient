@@ -28,7 +28,7 @@ impl MessageBoxWindow {
         self.window.set_icon(Some(&self.title_icon));
     }
 
-impl MessageBoxWindow {
+    // --- 以下为原有方法 ---
     pub fn popup(title: impl AsRef<str>, content: impl AsRef<str>) -> MessageBoxWindowJoinHandle {
         let (tx, rx) = tokio::sync::oneshot::channel::<()>();
 
