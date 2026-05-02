@@ -13,12 +13,20 @@ use crate::ui::OneshotReceiver;
 #[derive(NwgUi)]
 pub struct MessageBoxWindow {
     #[nwg_control(size: (480, 340), flags: "WINDOW|VISIBLE", center: true, topmost: true)]
-    #[nwg_events(OnWindowClose: [MessageBoxWindow::close])]
+    #[nwg_events(OnWindowClose: [MessageBoxWindow::close], OnInit: [MessageBoxWindow::setup_icon])]
     window: nwg::Window,
+
+    #[nwg_resource(source_file: Some("title.ico"))]
+    title_icon: nwg::Icon,
 
     #[nwg_control(position: (5, 5), size: (473, 333), text: "example text", readonly: false)]
     richtext: nwg::TextBox,
 }
+
+impl MessageBoxWindow {
+    fn setup_icon(&self) {
+        self.window.set_icon(Some(&self.title_icon));
+    }
 
 impl MessageBoxWindow {
     pub fn popup(title: impl AsRef<str>, content: impl AsRef<str>) -> MessageBoxWindowJoinHandle {
@@ -30,6 +38,7 @@ impl MessageBoxWindow {
         std::thread::spawn(move || {
             let data = Self {
                 window: Default::default(),
+                title_icon: Default::default(),
                 richtext: Default::default(),
             };
 
