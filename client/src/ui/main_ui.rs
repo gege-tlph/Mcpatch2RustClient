@@ -75,7 +75,7 @@ pub struct MainWindow {
 }
 
 impl MainWindow {
-    fn new() -> (MainUiCommand, main_window_ui::MainWindowUi) {
+    pub fn new() -> (MainUiCommand, main_window_ui::MainWindowUi) {
         let (dialog_result, receiver) = tokio::sync::mpsc::channel(1000);
         let (sender, commands) = tokio::sync::mpsc::channel(1000);
         
