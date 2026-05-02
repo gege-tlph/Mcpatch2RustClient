@@ -41,11 +41,9 @@ impl MessageBoxWindow {
                 ui.window.set_icon(Some(&icon));
             }
 
-            // 调整文本框填充窗口客户区（留 5px 边距）
-            // OnResize 里会自动调整，但手动初始化时也要设好
-            let (w, h) = ui.window.size();
-            ui.richtext.set_position((5, 5));
-            ui.richtext.set_size(w.saturating_sub(10), h.saturating_sub(10));
+            // 调整文本框填充窗口（留边距）
+            ui.richtext.set_position(5, 5);
+            ui.richtext.set_size(470, 310);
 
             ui.window.set_text(&title);
             ui.richtext.set_text(&content);
