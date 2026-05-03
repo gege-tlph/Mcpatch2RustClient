@@ -61,7 +61,7 @@ pub struct MainWindow {
     )]
     label_secondary: nwg::Label,
 
-    #[nwg_control(position: (35, 120), size: (450, 22), range: 0..1000)]
+    #[nwg_control(position: (35, 95), size: (450, 22), range: 0..1000)]
     progress: nwg::ProgressBar,
 
     #[nwg_control]
