@@ -51,19 +51,17 @@ pub struct MainWindow {
     #[nwg_events(OnWindowClose: [MainWindow::close])]
     window: nwg::Window,
 
-    #[nwg_control(position: (2, 15), size: (516, 24), text: "Label", 
+    #[nwg_control(position: (2, 12), size: (516, 30), text: "Label", 
         flags: "VISIBLE|ELIPSIS", h_align: HTextAlign::Center, 
-        // background_color: Some([255, 0, 255])
     )]
     label: nwg::Label,
 
-    #[nwg_control(position: (2, 55), size: (516, 24), text: "Label Secondary", 
+    #[nwg_control(position: (2, 52), size: (516, 30), text: "Label Secondary", 
         flags: "VISIBLE|ELIPSIS", h_align: HTextAlign::Center, 
-        // background_color: Some([0, 255, 255])
     )]
     label_secondary: nwg::Label,
 
-    #[nwg_control(position: (35, 110), size: (450, 20), range: 0..1000)]
+    #[nwg_control(position: (35, 120), size: (450, 22), range: 0..1000)]
     progress: nwg::ProgressBar,
 
     #[nwg_control]
