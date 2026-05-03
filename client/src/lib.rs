@@ -39,7 +39,10 @@ pub struct McpatchExitCode(pub i8);
 
 pub fn program() -> McpatchExitCode {
     std::env::set_var("RUST_BACKTRACE", "1");
-    
+
+    #[cfg(target_os = "windows")]
+    hide_console_initial();
+
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(4)
         .enable_all()
@@ -126,6 +129,35 @@ pub fn program() -> McpatchExitCode {
     {
         // 开始执行更新逻辑
         return runtime.block_on(run(params, ()));
+    }
+}
+
+/// 在程序启动时立即隐藏控制台窗口
+/// 后续会根据配置决定是否重新显示
+#[cfg(target_os = "windows")]
+fn hide_console_initial() {
+    use winapi::um::wincon::GetConsoleWindow;
+    use winapi::um::winuser::{ShowWindow, SW_HIDE};
+
+    unsafe {
+        let hwnd = GetConsoleWindow();
+        if !hwnd.is_null() {
+            ShowWindow(hwnd, SW_HIDE);
+        }
+    }
+}
+
+/// 根据配置显示或隐藏控制台窗口
+#[cfg(target_os = "windows")]
+pub fn apply_console_visibility(show: bool) {
+    use winapi::um::wincon::GetConsoleWindow;
+    use winapi::um::winuser::{ShowWindow, SW_HIDE, SW_SHOW};
+
+    unsafe {
+        let hwnd = GetConsoleWindow();
+        if !hwnd.is_null() {
+            ShowWindow(hwnd, if show { SW_SHOW } else { SW_HIDE });
+        }
     }
 }
 
