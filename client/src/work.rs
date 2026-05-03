@@ -670,6 +670,13 @@ pub async fn work(params: &StartupParameter, ui_cmd: UiCmd<'_>, allow_error: &mu
         }
     }
 
+    // 更新完成后启动指定程序
+    if !config.run_after_update.is_empty() {
+        log_info(format!("更新完成，启动程序: {}", config.run_after_update));
+        let _ = std::process::Command::new(&config.run_after_update)
+            .spawn();
+    }
+
     Ok(())
 }
 

@@ -113,6 +113,12 @@ pub struct GlobalConfig {
     /// 如果为true，会显示控制台窗口，方便调试
     #[default_value("false")]
     pub show_console: bool,
+
+    /// 更新完成后要启动的程序路径
+    /// 留空表示不启动任何程序
+    /// 示例：Plain Craft Launcher 2.exe
+    #[default_value("''")]
+    pub run_after_update: String,
 }
 
 impl GlobalConfig {
@@ -184,6 +190,7 @@ impl GlobalConfig {
         let http_retries = config["http-retries"].as_i64().be(|| "配置文件中找不到 http-retries")? as u8;
         let http_ignore_certificate = config["http-ignore-certificate"].as_bool().be(|| "配置文件中找不到 http-ignore-certificate")?.to_owned();
         let show_console = config["show-console"].as_bool().be(|| "配置文件中找不到 show-console")?.to_owned();
+        let run_after_update = config["run-after-update"].as_str().be(|| "配置文件中找不到 run-after-update")?.to_owned();
 
         Ok(GlobalConfig {
             urls,
@@ -201,6 +208,7 @@ impl GlobalConfig {
             http_retries,
             http_ignore_certificate,
             show_console,
+            run_after_update,
         })
     }
 }
