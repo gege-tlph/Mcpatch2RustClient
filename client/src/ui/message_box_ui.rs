@@ -36,10 +36,24 @@ impl MessageBoxWindow {
 
             let ui = Self::build_ui(data).unwrap();
 
-            // 从嵌入资源加载标题栏图标
-            if let Ok(embed) = nwg::EmbedResource::load(None) {
-                if let Ok(icon) = nwg::Icon::from_embed(&embed, Some(2), None) {
-                    ui.window.set_icon(Some(&icon));
+            // 从系统 imageres.dll 加载窗口图标
+            unsafe {
+                use winapi::um::winuser::{LoadImageW, IMAGE_ICON, LR_SHARED, SendMessageW, WM_SETICON};
+                use winapi::um::libloaderapi::LoadLibraryW;
+                use std::ffi::OsStr;
+                use std::os::windows::ffi::OsStrExt;
+
+                let hwnd = ui.window.handle.hwnd().unwrap();
+                let wide: Vec<u16> = OsStr::new("imageres.dll").encode_wide().chain(Some(0)).collect();
+                let dll = LoadLibraryW(wide.as_ptr());
+                if !dll.is_null() {
+                    let icon = LoadImageW(
+                        dll, 112 as _, IMAGE_ICON, 0, 0, LR_SHARED,
+                    );
+                    if !icon.is_null() {
+                        SendMessageW(hwnd, WM_SETICON, 0, icon as _);
+                        SendMessageW(hwnd, WM_SETICON, 1, icon as _);
+                    }
                 }
             }
 
