@@ -91,9 +91,11 @@ impl MainWindow {
 
         let ui = Self::build_ui(data).unwrap();
 
-        // 从文件加载图标并设置
-        if let Ok(icon) = nwg::Icon::from_file("title.ico", false) {
-            ui.window.set_icon(Some(&icon));
+        // 从嵌入资源加载标题栏图标
+        if let Ok(embed) = nwg::EmbedResource::load(None) {
+            if let Ok(icon) = nwg::Icon::from_embed(&embed, Some(2), None) {
+                ui.window.set_icon(Some(&icon));
+            }
         }
 
         let cmd = MainUiCommand { 
