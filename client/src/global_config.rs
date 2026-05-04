@@ -107,6 +107,12 @@ pub struct GlobalConfig {
     /// http/webdav协议是否忽略SSL证书验证
     #[default_value("false")]
     pub http_ignore_certificate: bool,
+
+    /// 是否显示控制台（黑窗口）
+    /// 如果为false，程序启动时不会显示控制台窗口
+    /// 如果为true，会显示控制台窗口，方便调试
+    #[default_value("false")]
+    pub show_console: bool,
 }
 
 impl GlobalConfig {
@@ -177,6 +183,7 @@ impl GlobalConfig {
         let http_timeout = config["http-timeout"].as_i64().be(|| "配置文件中找不到 http-timeout")? as u32;
         let http_retries = config["http-retries"].as_i64().be(|| "配置文件中找不到 http-retries")? as u8;
         let http_ignore_certificate = config["http-ignore-certificate"].as_bool().be(|| "配置文件中找不到 http-ignore-certificate")?.to_owned();
+        let show_console = config["show-console"].as_bool().be(|| "配置文件中找不到 show-console")?.to_owned();
 
         Ok(GlobalConfig {
             urls,
@@ -193,6 +200,7 @@ impl GlobalConfig {
             http_timeout,
             http_retries,
             http_ignore_certificate,
+            show_console,
         })
     }
 }
