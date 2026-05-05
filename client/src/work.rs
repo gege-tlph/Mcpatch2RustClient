@@ -107,6 +107,10 @@ pub async fn work(params: &StartupParameter, ui_cmd: UiCmd<'_>, allow_error: &mu
 
     *allow_error = config.allow_error;
 
+    // 根据配置显示或隐藏控制台窗口
+    #[cfg(target_os = "windows")]
+    crate::apply_console_visibility(config.show_console);
+
     let log_file_path = match params.graphic_mode {
         true => exe_dir.join("mcpatch.log"),
         false => exe_dir.join("mcpatch.log.txt"),
